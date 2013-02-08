@@ -26,8 +26,15 @@ DataSet create_dataset(Mat &image, char *filename)
 
 }
 
-void write_feature(Mat &image, DataSet &dataset)
+void write_feature(Mat &image_in, DataSet &dataset)
 {
+  // make sure the image is in native float
+  Mat image;
+  if (image_in.type() !=  CV_32F)
+    image_in.convertTo(image, CV_32F);
+  else
+    image = image_in;
+  
   hsize_t dims[3];
   DataSpace dsp = dataset.getSpace();
   dsp.getSimpleExtentDims(dims, NULL);
@@ -36,9 +43,7 @@ void write_feature(Mat &image, DataSet &dataset)
   // extend by one image
   dims[2] += 1;
   dataset.extend(dims);
-  // make sure the image is in native float
-  image.convertTo(image, CV_32F);
-  
+    
   // Select the last plane of the dataset for writing
   hsize_t offset[3], count[3];
   offset[0] = offset[1] = 0; offset[2] = dims[2] - 1;
