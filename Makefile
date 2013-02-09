@@ -5,7 +5,7 @@ LDFLAGS=-L$(OPENCV)/lib -lopencv_highgui -lopencv_imgproc -lopencv_core -L$(HDF5
 
 all: compute_features test_image_to_hdf5
 
-compute_features: write_image_to_hdf5.o compute_features.o 
+compute_features: write_image_to_hdf5.o compute_features.o membrane.o
 	g++ -o $@ $^ $(LDFLAGS)
 
 test_image_to_hdf5: write_image_to_hdf5.o test_image_to_hdf5.o 
