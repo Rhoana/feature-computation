@@ -11,7 +11,9 @@ using namespace std;
 H5::H5File create_feature_file(char *filename, const Mat &image);
 void write_feature(H5::H5File h5file, const Mat &image, const char *name);
 
+void adapthisteq(const Mat &in, Mat &out, float regularizer);
 void find_membranes(Mat &image_in, int windowsize, int membranewidth, H5::H5File &h5f);
+void drawhist(const Mat &src, const char *windowname);
 
 static int verbose;
 
@@ -82,9 +84,19 @@ int main(int argc, char** argv) {
   /* FEATURE: Original image */
   write_feature(h5f, image, "original");
   
+  double lo, hi;
+  minMaxLoc(image, &lo, &hi);
+  imshow("before", (255 * (image - lo)) / (hi - lo));
+  drawhist(image, "beforehist");
+
   /* normalize image */
-  // image = adaptive_histeq(image);
+  adapthisteq(image, image, 2);
+
+  imshow("after", image);
+  drawhist(image, "afterhist");
+  waitKey(0);
   
+
   /* FEATURE: normalized cross-correlation with membrane template */
   find_membranes(image, windowsize, membranewidth, h5f);
 }
