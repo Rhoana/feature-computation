@@ -13,6 +13,8 @@ void write_feature(H5::H5File h5file, const Mat &image, const char *name);
 
 void adapthisteq(const Mat &in, Mat &out, float regularizer);
 void find_membranes(Mat &image_in, int windowsize, int membranewidth, H5::H5File &h5f);
+void local_statistics(Mat &image_in, int windowsize, H5::H5File &h5f);
+void tensor_gradient_features(Mat &image_in,  H5::H5File &h5f);
 void drawhist(const Mat &src, const char *windowname);
 
 static int verbose;
@@ -83,13 +85,19 @@ int main(int argc, char** argv) {
   
   /* FEATURE: Original image */
   write_feature(h5f, image, "original");
-  
+
   /* normalize image */
-  adapthisteq(image, image, 2);
+  adapthisteq(image, image, 2);  // max CDF derivative of 2
 
-  /* FEATURE: normalized cross-correlation with membrane template */
+  /* FEATURE: Normalized image */
+  write_feature(h5f, image, "adapthisteq");
+
+  /* FEATURE: normalized cross-correlation with membrane template, with statistics */
   find_membranes(image, windowsize, membranewidth, h5f);
+
+  /* FEATURE: local statistics: mean, variance, and pixel counts per-decile */
+  local_statistics(image, windowsize, h5f);
+
+  /* FEATURE: successively smoothed versions of (image, anisotropy, gradient magnitude) */
+  tensor_gradient_features(image, h5f);
 }
-
-
-
