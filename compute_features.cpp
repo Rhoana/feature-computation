@@ -84,18 +84,8 @@ int main(int argc, char** argv) {
   /* FEATURE: Original image */
   write_feature(h5f, image, "original");
   
-  double lo, hi;
-  minMaxLoc(image, &lo, &hi);
-  imshow("before", (255 * (image - lo)) / (hi - lo));
-  drawhist(image, "beforehist");
-
   /* normalize image */
   adapthisteq(image, image, 2);
-
-  imshow("after", image);
-  drawhist(image, "afterhist");
-  waitKey(0);
-  
 
   /* FEATURE: normalized cross-correlation with membrane template */
   find_membranes(image, windowsize, membranewidth, h5f);
