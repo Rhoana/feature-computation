@@ -7,9 +7,9 @@ all: compute_features test_image_to_hdf5
 
 membrane.o: quickmedian.h
 
-compute_features: write_image_to_hdf5.o compute_features.o membrane.o adapthisteq.o local_statistics.o tensor_gradient_features.o drawhist.o 
+compute_features: opencv_hdf5.o compute_features.o membrane.o adapthisteq.o local_statistics.o tensor_gradient_features.o drawhist.o 
 	g++ -o $@ $^ $(LDFLAGS)
 
-test_image_to_hdf5: write_image_to_hdf5.o test_image_to_hdf5.o 
+test_image_to_hdf5: opencv_hdf5.o test_image_to_hdf5.o 
 	g++ -o $@ $^ $(LDFLAGS)
 
