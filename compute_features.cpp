@@ -14,8 +14,9 @@ void write_feature(H5::H5File h5file, const Mat &image, const char *name);
 void adapthisteq(const Mat &in, Mat &out, float regularizer);
 void find_membranes(Mat &image_in, int windowsize, int membranewidth, H5::H5File &h5f);
 void local_statistics(Mat &image_in, int windowsize, H5::H5File &h5f);
-void tensor_gradient_features(Mat &image_in,  H5::H5File &h5f);
+void tensor_gradient_features(Mat &image_in, H5::H5File &h5f);
 void drawhist(const Mat &src, const char *windowname);
+void vesicles(const Mat &image_in, H5::H5File &h5f);
 
 static int verbose;
 
@@ -84,6 +85,9 @@ int main(int argc, char** argv) {
   
   /* FEATURE: Original image */
   write_feature(h5f, image, "original");
+
+  /* FEATURE: normxcorr with small circles */
+  vesicles(image, h5f);
 
   /* normalize image */
   adapthisteq(image, image, 2);  // max CDF derivative of 2

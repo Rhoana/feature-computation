@@ -9,7 +9,7 @@ using namespace std;
 
 H5File open_feature_file(char *filename);
 vector<string> get_feature_names(H5File h5f);
-void read_feature(H5File h5f, Mat &image_out, const char *name);
+void read_feature(H5File h5f, Mat &image_out, const char *name, const Rect &roi=Rect(0,0,0,0));
 
 vector<string> feature_names(H5File h5f)
 {
@@ -119,6 +119,7 @@ int main(int argc, char** argv)
 
     forest.train(data, CV_ROW_SAMPLE, labels,
                  Mat(), Mat(), var_type, Mat(), params);
-    forest.save("forest.xml");
 
+    cv::FileStorage fs("forest.xml",cv::FileStorage::WRITE);
+    forest.write(*fs, "forest");
 }

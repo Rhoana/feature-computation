@@ -72,14 +72,23 @@ void write_feature(H5File h5f, const Mat &image_in, const char *name)
     dataset.write(imdata, PredType::NATIVE_FLOAT, imspace);
 }
 
-void read_feature(H5File h5f, Mat &image_out, const char *name)
+void read_feature(H5File h5f, Mat &image_out, const char *name, const Rect &roi=Rect(0,0,0,0))
 {
     DataSet dataset = h5f.openDataSet(name);
     DataSpace dspace = dataset.getSpace();
     assert (dspace.getSimpleExtentNdims() == 2);
     hsize_t dims[2];
     dspace.getSimpleExtentDims(dims);
-    image_out.create(dims[0], dims[1], CV_32F);
+    if ((roi.width == 0) && (roi.height == 0)) {
+        image_out.create(dims[0], dims[1], CV_32F);
+        dspace.selectAll();
+    } else {
+        image_out.create(roi.height, roi.width, CV_32F);
+        hsize_t _offset[2], _size[2];
+        _offset[0] = roi.y; _offset[1] = roi.x;
+        _size[0] = roi.height; _size[1] = roi.width;
+        dspace.selectHyperslab(H5S_SELECT_SET, _size, _offset);
+    }
     
     DataSpace imspace;
     float *imdata;
@@ -101,7 +110,18 @@ void read_feature(H5File h5f, Mat &image_out, const char *name)
         imspace.selectHyperslab(H5S_SELECT_SET, im_size, im_offset);
         imdata = image_out.ptr<float>() - parent_ofs.x - parent_ofs.y * parent_size.width;
     }
-    dataset.read(imdata, PredType::NATIVE_FLOAT, imspace);
+    dataset.read(imdata, PredType::NATIVE_FLOAT, imspace, dspace);
+}
+
+void read_feature_size(H5File h5f, Size &size_out, const char *name)
+{
+    DataSet dataset = h5f.openDataSet(name);
+    DataSpace dspace = dataset.getSpace();
+    assert (dspace.getSimpleExtentNdims() == 2);
+    hsize_t dims[2];
+    dspace.getSimpleExtentDims(dims);
+    size_out.height = dims[0];
+    size_out.width = dims[1];
 }
 
 vector<string> get_feature_names(H5File h5f)
