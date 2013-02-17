@@ -74,9 +74,8 @@ int main(int argc, char** argv) {
   
   /* Read input, convert to grayscale */
   Mat image;
-  image = imread( input_image, 1 );
+  image = imread(input_image, 0);
   image.convertTo(image, CV_8U);
-  cvtColor(image, image, CV_RGB2GRAY);
   
   /* create the feature file */
   H5::H5File h5f = create_feature_file(output_hdf5, image);
