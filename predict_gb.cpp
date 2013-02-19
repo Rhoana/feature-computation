@@ -9,10 +9,12 @@ using namespace cv;
 using namespace H5;
 using namespace std;
 
+H5::H5File create_feature_file(char *filename, const Mat &image);
 H5File open_feature_file(char *filename);
 vector<string> get_feature_names(H5File h5f);
 void read_feature(H5File h5f, Mat &image_out, const char *name, const Rect &roi=Rect(0,0,0,0));
 void read_feature_size(H5File h5f, Size &size_out, const char *name);
+void write_feature(H5::H5File h5file, const Mat &image, const char *name);
 
 vector<string> feature_names(H5File h5f)
 {
@@ -29,7 +31,7 @@ vector<string> feature_names(H5File h5f)
 
 int main(int argc, char** argv)
 {
-    cv::FileStorage fs("GB.xml",cv::FileStorage::READ);
+    cv::FileStorage fs(argv[1], cv::FileStorage::READ);
     CvBoost classifier;
     classifier.read(*fs, *fs["classifier"]);
 
@@ -77,7 +79,20 @@ int main(int argc, char** argv)
             }
         }
     }
-    normalize(prediction, prediction, 0, 1, NORM_MINMAX);
-    imshow("result", prediction);
-    waitKey(0);
+
+    if (argc == 3) {
+        normalize(prediction, prediction, 0, 1, NORM_MINMAX);
+        imshow("result", prediction);
+        waitKey(0);
+    } else {
+        H5File h5fout = create_feature_file(argv[3], prediction);
+        write_feature(h5fout, prediction, "probabilities");
+        for (int fnum = 0; fnum < num_features; fnum++) {
+            if (names[fnum].find("membrane") != string::npos) {
+                Mat feature;
+                read_feature(h5f, feature, names[fnum].c_str());
+                write_feature(h5fout, feature, names[fnum].c_str());
+            }
+        }
+    }
 }
