@@ -107,7 +107,7 @@ int main(int argc, char** argv)
     CvBoost classifier;
     CvBoostParams parms;
     parms.boost_type = CvBoost::GENTLE;
-    parms.weak_count = 1000;
+    parms.weak_count = 2000;
     classifier.train(data, CV_ROW_SAMPLE, labels,
                      Mat(), Mat(), var_type, Mat(), parms);
 
