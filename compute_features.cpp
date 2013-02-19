@@ -72,6 +72,8 @@ int main(int argc, char** argv) {
   assert (argc - optind == 2);  /* 2 required arguments */
   char *input_image = argv[optind];
   char *output_hdf5 = argv[optind + 1];
+
+  cout << "Storing features from " << input_image << " in " << output_hdf5 << endl;
   
   /* Read input, convert to grayscale */
   Mat image;

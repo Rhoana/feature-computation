@@ -3,7 +3,7 @@ HDF5_DIR=/Users/thouis/homebrew/Cellar/hdf5/1
 CXXFLAGS=-I$(OPENCV)/include -I$(HDF5_DIR)/include -g
 LDFLAGS=-L$(OPENCV)/lib -lopencv_highgui -lopencv_imgproc -lopencv_core -L$(HDF5_DIR)/lib -lhdf5_cpp -lhdf5
 
-all: compute_features show_features test_image_to_hdf5 train_randomforest
+all: compute_features show_features test_image_to_hdf5 train_randomforest predict_randomforest train_gb predict_gb
 
 membrane.o: quickmedian.h
 
@@ -19,6 +19,15 @@ train_randomforest: opencv_hdf5.o train_randomforest.o
 predict_randomforest: opencv_hdf5.o predict_randomforest.o
 	g++ -o $@ $^ $(LDFLAGS) -lopencv_ml
 
+train_gb: opencv_hdf5.o train_gb.o
+	g++ -o $@ $^ $(LDFLAGS) -lopencv_ml
+
+predict_gb: opencv_hdf5.o predict_gb.o
+	g++ -o $@ $^ $(LDFLAGS) -lopencv_ml
+
+
 test_image_to_hdf5: opencv_hdf5.o test_image_to_hdf5.o 
 	g++ -o $@ $^ $(LDFLAGS)
 
+sketch_on_image: sketch_on_image.o
+	g++ -o $@ $^ $(LDFLAGS)
