@@ -95,6 +95,8 @@ int main(int argc, char** argv)
         // Add labels
         labels(Rect(0, base, 1, num_positive)) = Scalar(1);
         labels(Rect(0, base + num_positive, 1, num_negative)) = Scalar(0);
+
+        base += num_positive + num_negative;
     }
 
     float priors[] = {total_num_negative, total_num_positive};
