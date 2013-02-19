@@ -16,7 +16,8 @@ int main(int argc, char** argv)
 {
     H5File h5f = open_feature_file(argv[1]);
     vector<string> feature_names = get_feature_names(h5f);
-    for (int i; i < feature_names.size(); i++) {
+    cout << "READ " << feature_names.size() << endl;
+    for (int i = 0; i < feature_names.size(); i++) {
         Mat im;
         read_feature(h5f, im, feature_names[i].c_str());
         double minv, maxv;
